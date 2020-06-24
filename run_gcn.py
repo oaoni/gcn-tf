@@ -1,9 +1,9 @@
 from absl import flags
-from absl import logging
-from absl import app
-import numpy as np
-import pandas as pd
-import tensorflow as tf
+# from absl import logging
+# from absl import app
+# import numpy as np
+# import pandas as pd
+# import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
 import sys
@@ -24,38 +24,29 @@ flags.DEFINE_string('dataset', 'default',help='The data set to use. ["default"]'
 flags.DEFINE_string('name', 'gmu', 'Model name.')
 
 #GCN specific configurations
-flags.DEFINE_integer('hidden_dim', 200, 'Number of hidden units.')
+flags.DEFINE_integer('n_hidden', 200, 'Number of hidden units.')
 flags.DEFINE_integer('save_step', 10, 'Number of iterations to save summaries to filewriter.')
-
-
-
-
-def main(argv):
-
-    #Load desired dataset
-    if FLAGS.dataset == 'default':
-
-        G = datasets.load_karate_club_graph()
-
-        # print("Node Degree")
-        # for v in G:
-        #     print('%s %s' % (v, G.degree(v)))
-        #
-        # nx.draw_circular(G, with_labels=True)
-        # plt.show()
-
-    print(FLAGS.dataset)
-
-    #Run desired model
-    #Create the model object
-    GCN = gcn.GCN(name=FLAGS.name, hidden_dim=FLAGS.hidden_dim,
-    save_step = FLAGS.save_step)
-
-    print(GCN)
-    print("the gift that keeps giving like Babushka")
 
 
 
 if __name__ == "__main__":
 
-    app.run(main)
+    flags.FLAGS(sys.argv)
+    
+    graph = datasets.load_graph(FLAGS.dataset)
+
+    #Run desired model
+    #Create the model object
+    # name = 'gcn', epochs = 100, batch_size = 100,
+    #              cost_func = 'softmax_cross_entropy', lr = 0.01, drop_rate=0,
+    #              n_hidden = 500, input_dr = 0, optimizer = 'adam',
+    #              reg_type = 'l2', reg_beta = 0, n_features = 500, save_step = 100,
+    #              convolution='spectral', feature_type='identity',n_nodes=10)
+    GCN = gcn.GCN(name=FLAGS.name, n_hidden=FLAGS.n_hidden, 
+    save_step = FLAGS.save_step)
+    
+    #Fit the model
+    GCN.fit(graph['A'][0,:].reshape(-1,1), graph['Y'][0,:].reshape(-1,1))
+    
+
+    print("the gift that keeps giving like Babushka")
