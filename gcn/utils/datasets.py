@@ -13,8 +13,30 @@ import pandas as pd
 import os
 import networkx as nx
 
-def load_karate_club_graph():
+def load_graph(dataset):
+    
+    if dataset == 'default':
+        graph = _load_karate_club_graph()
+        
+    return graph
 
+def _load_karate_club_graph():
+    
+    graph = {}
+    node_attr = []
     G = nx.karate_club_graph()
+    A = nx.convert_matrix.to_numpy_matrix(G)
+    
+    for node in G.nodes(data=True):
+        node_attr += [node[1]['club']]
+    
+    # lb = preprocessing.LabelBinarizer()
+    # labels = lb.fit_transform(node_attr)
 
-    return G
+    enc = OneHotEncoder(categories='auto')
+    labels = enc.fit_transform(np.array(node_attr).reshape(-1,1)).toarray()
+    
+    graph['A'] = A
+    graph['Y'] = labels
+
+    return graph
