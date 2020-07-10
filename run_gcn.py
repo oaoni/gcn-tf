@@ -11,6 +11,7 @@ import networkx as nx
 
 from gcn.models import gcn
 from gcn.utils import datasets
+import importlib
 
 #Disables AVX compile warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -24,12 +25,13 @@ flags.DEFINE_string('dataset', 'default',help='The data set to use. ["default"]'
 flags.DEFINE_string('name', 'gmu', 'Model name.')
 
 #GCN specific configurations
-flags.DEFINE_integer('n_hidden', 200, 'Number of hidden units.')
+flags.DEFINE_integer('n_hidden', 40, 'Number of hidden units.')
 flags.DEFINE_integer('save_step', 10, 'Number of iterations to save summaries to filewriter.')
 
 
 
 if __name__ == "__main__":
+    
 
     flags.FLAGS(sys.argv)
     
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     save_step = FLAGS.save_step)
     
     #Fit the model
-    GCN.fit(graph['A'][0,:].reshape(-1,1), graph['Y'][0,:].reshape(-1,1))
+    pred = GCN.fit(graph['A'][0,:].reshape(1,-1), graph['Y'][0,:].reshape(1,-1))
     
-
-    print("the gift that keeps giving like Babushka")
+   
+    print("le cadeau qui continue de donner comme Babouchka")

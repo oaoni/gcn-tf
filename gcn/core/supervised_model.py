@@ -34,8 +34,8 @@ class SupervisedModel(Model):
         :param valY: Validation labels, array_like, shape (N, n_features), (default = None)        
         """
         
-        n_nodes = trainA.shape[0]
-        print('The number of nodes is: ', n_nodes)
+        n_nodes = trainA.shape[1]
+       
         if self.feature_type == 'identity':
             n_features = n_nodes
             trainX = np.eye(n_features)
@@ -53,12 +53,12 @@ class SupervisedModel(Model):
                     act_func, reg_type, reg_beta, drop_rate)
         
         #Test the model
-        self._predict(trainA, trainX)
+        prediction = self._predict(trainA, trainX)
         
         #Train the model
         # self._train_model(trainA, trainX, trainY, valA, valX, valY)
         
-        return self
+        return prediction
 
     def predict():
         return

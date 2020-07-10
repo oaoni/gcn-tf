@@ -25,7 +25,7 @@ class GCN(SupervisedModel):
     def __init__(self, name = 'gcn', epochs = 100, batch_size = 100,
                  cost_func = 'softmax_cross_entropy', lr = 0.01, drop_rate=0,
                  n_hidden = 50, input_dr = 0, optimizer = 'adam',
-                 reg_type = 'l2', reg_beta = 0, save_step = 100,
+                 reg_type = 'l2', reg_beta = 0, save_step = 100,        
                  convolution='spectral', feature_type='identity', act_func = 'relu'):
         """Constructor"""
         SupervisedModel.__init__(self, name)
@@ -63,16 +63,16 @@ class GCN(SupervisedModel):
         #Select convolution aggregator operator
         
         #Create placeholders
-        self.A = Input(shape=(n_nodes,), dtype=tf.float32, name='ad_matrix')
+        A = Input(shape=(n_nodes,), dtype=tf.float32)
 
         # if feature_type == 'identity':
-        self.X = Input(shape=(n_features,), dtype=tf.float32, name='node_feat')
-            
+        X = Input(shape=(n_features,n_features), dtype=tf.float32, name='node_feat')
         #Create graph
-        self.y = GraphConvolution(n_hidden, act_func, reg_type, reg_beta, drop_rate)([self.A,self.X])
-        # self.y = 
+        # self.y = GraphConvolution(n_hidden, act_func, reg_type, reg_beta, drop_rate)([self.A,self.X])
+        Y = GraphConvolution(units=n_hidden)([A,X])
+        # self.y = tf.keras.layers.Dense(n_hidden, input_shape=(None,n_nodes))(self.A)
         
-        self.model = Model(inputs=[self.A,self.X], outputs=self.y)
+        self.model = Model(inputs=[A,X], outputs=Y)
             
             
     def _train_model(self, trainA, trainX, trainY, valA, valX, valY):
@@ -96,7 +96,8 @@ class GCN(SupervisedModel):
         
     def _predict(self, trainA, trainX):
         
-        predictions = self.model(trainA, trainX).numpy()
+        print(trainX.shape)
+        predictions = self.model([trainA, trainX]).numpy()
         
         return predictions
 
